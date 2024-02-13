@@ -1,35 +1,32 @@
 
-const express = require ('express');
-
-const bodyParser = require('body-parser');
-
-const {randomBytes} = require ('crypto'); //generates random numbers to create id
+import express from "express";
+import bodyParser from "body-parser"; // Import body-parser using ES6 syntax
+import { randomBytes } from "crypto";
 
 const posts = {};
 
-
 const app = express();
-app.use(bodyParser.json);
-app.get("post", (req, res)=>{
-    res.send(posts);
+
+// Use bodyParser.json() instead of json
+app.use(bodyParser.json());
+
+app.get("/posts", (req, res) => {
+  res.send(posts);
 });
 
-app.post("/post", (req, res)=>{
-    
-    const id = randomBytes(4).toString('hex');
+app.post("/posts", (req, res) => {
+  const id = randomBytes(4).toString("hex");
+  const { title } = req.body;
 
-    const {title} = req.body;
+  posts[id] = {
+    title,
+    id
+  };
 
-    posts[id] = {
-        id, title
-    };
-
-    res.send(201).send(posts[id]);
-
+  // Use status() instead of send() to set the status code
+  res.status(201).send(posts[id]);
 });
 
-app.listen(4000, (req, res)=>{
-
-    console.log("Listing to port 4000");
-
-})
+app.listen(4000, () => {
+  console.log("Listening to port 4000");
+});
